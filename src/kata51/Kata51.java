@@ -8,11 +8,11 @@ public class Kata51 {
     public static void main(String[] args) {
         Connection conexion=connect("Kata5.db");
         selectfromdb("SELECT * FROM PEOPLE",conexion);
-        /*String sql = """ para la v2
+        String sql = """
                      CREATE TABLE IF NOT EXISTS direcc_email (
                       id integer PRIMARY KEY AUTOINCREMENT,
-                      direccion text NOT NULL);""";*/
-        //createtable(sql,conexion);
+                      direccion text NOT NULL);""";
+        createtable(sql,conexion);
     }
     private static Connection connect(String bdurl) {
         String url = "jdbc:sqlite:"+bdurl;
@@ -37,6 +37,18 @@ public class Kata51 {
                 rs.getString("Apellidos") + "\t" +
                 rs.getString("Departamento") + "\t");
             }
+        } 
+        catch (SQLException e) {
+        System.out.println(e.getMessage());
+        }
+    }
+    public static void createtable(String sql,Connection conexion){
+        
+        try (
+        Statement stmt = conexion.createStatement()) {
+        // Se crea la nueva tabla
+        stmt.execute(sql);
+        System.out.println("Tabla creada");
         } 
         catch (SQLException e) {
         System.out.println(e.getMessage());
