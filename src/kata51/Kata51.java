@@ -4,8 +4,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
+import java.sql.PreparedStatement;
 public class Kata51 {
     public static void main(String[] args) {
+        MailListReader read=new MailListReader("emails.txt");
+        List<String> lista=read.read();
         Connection conexion=connect("Kata5.db");
         selectfromdb("SELECT * FROM PEOPLE",conexion);
         String sql = """
@@ -13,6 +17,9 @@ public class Kata51 {
                       id integer PRIMARY KEY AUTOINCREMENT,
                       direccion text NOT NULL);""";
         createtable(sql,conexion);
+        for (String line: lista) {
+            insert(line,conexion);
+        }
     }
     private static Connection connect(String bdurl) {
         String url = "jdbc:sqlite:"+bdurl;
@@ -52,6 +59,17 @@ public class Kata51 {
         } 
         catch (SQLException e) {
         System.out.println(e.getMessage());
+        }
+    }
+    public static void insert(String email,Connection conexion) {
+        String sql = "INSERT INTO direcc_email(direccion) VALUES(?)";
+        try (
+            PreparedStatement pstmt = conexion.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            pstmt.executeUpdate();
+        } 
+        catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
 }
